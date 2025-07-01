@@ -1,0 +1,25 @@
+{
+  "name": "projet-architecture-logicielle",
+  "version": "1.0.0",
+  "description": "Projet d'architecture logicielle complet avec site web d'actualités, services SOAP/REST et client Java",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install && cd ../soap-service && npm install && cd ../rest-service && npm install && cd ../java-client && mvn install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:soap\" \"npm run dev:rest\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "dev:soap": "cd soap-service && npm run dev",
+    "dev:rest": "cd rest-service && npm run dev",
+    "db:setup": "cd backend && npx prisma migrate dev --name init && npx prisma db seed",
+    "db:reset": "cd backend && npx prisma migrate reset",
+    "build:java": "cd java-client && mvn clean compile",
+    "run:java": "cd java-client && mvn exec:java -Dexec.mainClass=\"com.project.client.Main\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["architecture", "logicielle", "soap", "rest", "react", "nodejs", "java"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
