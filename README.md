@@ -185,5 +185,3 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 Pour toute question ou problème, veuillez ouvrir une issue sur le dépôt GitHub.
 
 ---
-
-**Développé avec ❤️ pour l'apprentissage des architectures microservices**
