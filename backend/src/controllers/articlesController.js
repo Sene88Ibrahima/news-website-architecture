@@ -8,12 +8,22 @@ module.exports = {
   // GET /api/articles
   getArticles: async (req, res) => {
     try {
-      const { page = 1, limit = 10, category, published } = req.query;
+      const { page = 1, limit = 10, category, published, sort = 'desc', search } = req.query;
       const skip = (parseInt(page) - 1) * parseInt(limit);
       
       const where = {};
       if (category) where.categoryId = category;
       if (published !== undefined) where.published = published === 'true';
+      if (search) {
+        where.OR = [
+          { title: { contains: search, mode: 'insensitive' } },
+          { summary: { contains: search, mode: 'insensitive' } },
+          { content: { contains: search, mode: 'insensitive' } }
+        ];
+      }
+      
+      // Determine sort order
+      const orderBy = { createdAt: sort === 'asc' ? 'asc' : 'desc' };
       
       const [articles, total] = await Promise.all([
         prisma.article.findMany({
@@ -24,7 +34,7 @@ module.exports = {
             author: { select: { id: true, username: true } },
             category: { select: { id: true, name: true } }
           },
-          orderBy: { createdAt: 'desc' }
+          orderBy
         }),
         prisma.article.count({ where })
       ]);

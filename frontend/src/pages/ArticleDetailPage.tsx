@@ -121,19 +121,36 @@ const ArticleDetailPage: React.FC = () => {
                   <span>Modifié le {new Date(article.updatedAt).toLocaleDateString('fr-FR')}</span>
                 </>
               )}
+              <span className="mx-2">•</span>
+              <span className="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                {(() => {
+                  const wordCount = article.content.trim().split(/\s+/).length;
+                  const readingTime = Math.ceil(wordCount / 200);
+                  return readingTime < 1 ? '< 1 min de lecture' : `${readingTime} min de lecture`;
+                })()}
+              </span>
             </div>
             
             {article.summary && (
-              <p className="text-xl text-gray-700 leading-relaxed">
-                {article.summary}
-              </p>
+              <div className="mb-6">
+                <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">RÉSUMÉ</h2>
+                <p className="text-xl text-gray-700 leading-relaxed font-medium">
+                  {article.summary}
+                </p>
+              </div>
             )}
           </header>
 
           {/* Article Content */}
-          <div className="prose prose-lg max-w-none mb-8">
-            <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
-              {article.content}
+          <div className="mb-8">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">CONTENU DE L'ARTICLE</h2>
+            <div className="prose prose-lg max-w-none">
+              <div className="whitespace-pre-wrap text-gray-900 leading-relaxed text-lg">
+                {article.content}
+              </div>
             </div>
           </div>
 
