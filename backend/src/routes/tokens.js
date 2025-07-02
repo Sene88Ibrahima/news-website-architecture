@@ -10,6 +10,9 @@ router.get('/', protect, requireAdmin, asyncHandler(tokensController.getTokens))
 // POST /api/tokens - generate token (ADMIN)
 router.post('/', protect, requireAdmin, asyncHandler(tokensController.createToken));
 
+// PUT /api/tokens/:id/toggle - toggle token status (ADMIN)
+router.put('/:id/toggle', protect, requireAdmin, asyncHandler(tokensController.toggleToken));
+
 // DELETE /api/tokens/:id - delete token (ADMIN)
 router.delete('/:id', protect, requireAdmin, asyncHandler(tokensController.deleteToken));
 

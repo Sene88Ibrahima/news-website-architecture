@@ -15,10 +15,14 @@ public class SoapClient {
     private static final String NAMESPACE_URI = "http://localhost:8080/soap";
     private static final String SERVICE_NAME = "UserService";
     
-    private final String serviceUrl;
-    private final String wsdlUrl;
-    private UserServiceSoap userService;
-    private String authToken;
+    protected final String serviceUrl;
+    protected final String wsdlUrl;
+    protected UserServiceSoap userService;
+    protected String authToken;
+    
+    public SoapClient() {
+        this("http://localhost:8080/soap");
+    }
     
     public SoapClient(String serviceUrl) {
         this.serviceUrl = serviceUrl;
@@ -32,16 +36,38 @@ public class SoapClient {
             QName serviceName = new QName(NAMESPACE_URI, SERVICE_NAME);
             Service service = Service.create(wsdlLocation, serviceName);
             userService = service.getPort(UserServiceSoap.class);
+            logger.info("SOAP service initialized successfully");
         } catch (Exception e) {
-            logger.error("Error initializing SOAP service", e);
-            throw new RuntimeException("Failed to initialize SOAP service", e);
+            logger.warn("Could not initialize SOAP service: " + e.getMessage());
+            logger.warn("The application will start but SOAP functionality will be unavailable until the service is running.");
+            // Ne pas lancer d'exception pour permettre à l'application de démarrer
+            userService = null;
         }
+    }
+    
+    /**
+     * Check if SOAP service is available
+     */
+    public boolean isServiceAvailable() {
+        return userService != null;
+    }
+    
+    /**
+     * Authenticate user and get JWT token
+     */
+    public boolean authenticate(String username, String password) {
+        return authenticateUser(username, password);
     }
     
     /**
      * Authenticate user and get JWT token
      */
     public boolean authenticateUser(String username, String password) {
+        if (!isServiceAvailable()) {
+            System.err.println("SOAP service is not available. Please ensure the server is running.");
+            return false;
+        }
+        
         try {
             AuthenticateUserRequest request = new AuthenticateUserRequest();
             request.setUsername(username);
@@ -72,6 +98,11 @@ public class SoapClient {
      * Get list of users
      */
     public void getUsers(int page, int limit, String role) {
+        if (!isServiceAvailable()) {
+            System.err.println("SOAP service is not available. Please ensure the server is running.");
+            return;
+        }
+        
         if (!isAuthenticated()) {
             System.err.println("Error: Not authenticated. Please log in first.");
             return;
@@ -117,6 +148,11 @@ public class SoapClient {
      * Get user by ID
      */
     public void getUserById(String userId) {
+        if (!isServiceAvailable()) {
+            System.err.println("SOAP service is not available. Please ensure the server is running.");
+            return;
+        }
+        
         if (!isAuthenticated()) {
             System.err.println("Error: Not authenticated. Please log in first.");
             return;
@@ -151,6 +187,11 @@ public class SoapClient {
      * Add new user
      */
     public void addUser(String username, String email, String password, String role) {
+        if (!isServiceAvailable()) {
+            System.err.println("SOAP service is not available. Please ensure the server is running.");
+            return;
+        }
+        
         if (!isAuthenticated()) {
             System.err.println("Error: Not authenticated. Please log in first.");
             return;
@@ -186,6 +227,11 @@ public class SoapClient {
      * Update user
      */
     public void updateUser(String userId, String username, String email, String password, String role) {
+        if (!isServiceAvailable()) {
+            System.err.println("SOAP service is not available. Please ensure the server is running.");
+            return;
+        }
+        
         if (!isAuthenticated()) {
             System.err.println("Error: Not authenticated. Please log in first.");
             return;
@@ -224,6 +270,11 @@ public class SoapClient {
      * Delete user
      */
     public void deleteUser(String userId) {
+        if (!isServiceAvailable()) {
+            System.err.println("SOAP service is not available. Please ensure the server is running.");
+            return;
+        }
+        
         if (!isAuthenticated()) {
             System.err.println("Error: Not authenticated. Please log in first.");
             return;

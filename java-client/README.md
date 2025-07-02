@@ -81,7 +81,7 @@ java -jar target/news-client-1.0.0.jar soap users add \
   --username "newuser" \
   --email "newuser@example.com" \
   --password "password123" \
-  --role "USER" \
+  --role "VISITOR" \
   --token "your-jwt-token-here"
 ```
 

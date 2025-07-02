@@ -81,6 +81,19 @@
             <artifactId>picocli</artifactId>
             <version>4.6.3</version>
         </dependency>
+        
+        <!-- JavaFX Dependencies -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>17.0.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>17.0.2</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
@@ -136,7 +149,8 @@
                 </executions>
             </plugin>
             
-            <!-- JAXWS Plugin for SOAP Client Generation -->
+            <!-- JAXWS Plugin for SOAP Client Generation - Disabled as classes are already generated -->
+            <!--
             <plugin>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
@@ -147,20 +161,43 @@
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <wsdlUrls>
-                                <wsdlUrl>http://localhost:8080/soap?wsdl</wsdlUrl>
-                            </wsdlUrls>
+                            <wsdlFiles>
+                                <wsdlFile>src/main/resources/userService.wsdl</wsdlFile>
+                            </wsdlFiles>
                             <packageName>com.newswebsite.client.soap.generated</packageName>
                             <sourceDestDir>${project.build.directory}/generated-sources/wsimport</sourceDestDir>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            -->
             
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+            </plugin>
+            
+            <!-- JavaFX Plugin -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>com.newswebsite.client.gui.UserManagementApp</mainClass>
+                </configuration>
+            </plugin>
+            
+            <!-- Exec Plugin for running Java applications -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.newswebsite.client.gui.UserManagementApp</mainClass>
+                    <includeProjectDependencies>true</includeProjectDependencies>
+                    <includePluginDependencies>false</includePluginDependencies>
+                </configuration>
             </plugin>
         </plugins>
     </build>

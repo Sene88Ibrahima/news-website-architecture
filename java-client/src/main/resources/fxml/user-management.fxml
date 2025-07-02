@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.newswebsite.client.gui.UserManagementController">
+   <children>
+      <!-- En-tête -->
+      <HBox alignment="CENTER" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
+         <children>
+            <Label text="Gestion des Utilisateurs - Client SOAP" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      
+      <!-- Section de connexion -->
+      <VBox style="-fx-background-color: #ecf0f1; -fx-padding: 20;">
+         <children>
+            <Label text="Connexion" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label text="Nom d'utilisateur:" minWidth="120" />
+                  <TextField fx:id="usernameField" prefWidth="150.0" promptText="admin" />
+                  <Label text="Mot de passe:" minWidth="100" />
+                  <PasswordField fx:id="passwordField" prefWidth="150.0" promptText="password" />
+                  <Button fx:id="loginButton" text="Se connecter" style="-fx-background-color: #3498db; -fx-text-fill: white;" />
+                  <Button fx:id="logoutButton" text="Se déconnecter" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <Label fx:id="statusLabel" text="Non connecté" style="-fx-font-style: italic; -fx-text-fill: #7f8c8d;">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </VBox>
+      
+      <!-- Section de gestion des utilisateurs -->
+      <VBox fx:id="userManagementPane" spacing="20.0">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <!-- Filtres et contrôles -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-border-color: #dee2e6; -fx-border-radius: 5;">
+               <children>
+                  <Label text="Page:" />
+                  <TextField fx:id="pageField" prefWidth="60.0" text="1" />
+                  <Label text="Limite:" />
+                  <TextField fx:id="limitField" prefWidth="60.0" text="10" />
+                  <Label text="Rôle:" />
+                  <ComboBox fx:id="roleFilterCombo" prefWidth="120.0" />
+                  <Button fx:id="refreshButton" text="Actualiser" style="-fx-background-color: #28a745; -fx-text-fill: white;" />
+               </children>
+            </HBox>
+            
+            <!-- Table des utilisateurs -->
+            <VBox>
+               <children>
+                  <Label text="Liste des Utilisateurs" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
+                  <TableView fx:id="usersTable" prefHeight="300.0">
+                     <columns>
+                        <TableColumn fx:id="idColumn" prefWidth="80.0" text="ID" />
+                        <TableColumn fx:id="usernameColumn" prefWidth="150.0" text="Nom d'utilisateur" />
+                        <TableColumn fx:id="emailColumn" prefWidth="200.0" text="Email" />
+                        <TableColumn fx:id="roleColumn" prefWidth="100.0" text="Rôle" />
+                        <TableColumn fx:id="createdColumn" prefWidth="150.0" text="Créé le" />
+                     </columns>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </TableView>
+               </children>
+            </VBox>
+            
+            <!-- Formulaires d'ajout et de modification -->
+            <HBox spacing="20.0">
+               <children>
+                  <!-- Formulaire d'ajout -->
+                  <VBox spacing="10.0" style="-fx-background-color: #e8f5e8; -fx-padding: 15; -fx-border-color: #28a745; -fx-border-radius: 5;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Ajouter un Utilisateur" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #155724;" />
+                        <GridPane hgap="10.0" vgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="NEVER" minWidth="100.0" />
+                              <ColumnConstraints hgrow="ALWAYS" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Nom d'utilisateur:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                              <TextField fx:id="newUsernameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                              <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                              <TextField fx:id="newEmailField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label text="Mot de passe:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                              <PasswordField fx:id="newPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label text="Rôle:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                              <ComboBox fx:id="newRoleCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                           </children>
+                        </GridPane>
+                        <Button fx:id="addUserButton" text="Ajouter" style="-fx-background-color: #28a745; -fx-text-fill: white;" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Formulaire de modification -->
+                  <VBox spacing="10.0" style="-fx-background-color: #fff3cd; -fx-padding: 15; -fx-border-color: #ffc107; -fx-border-radius: 5;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Modifier l'Utilisateur Sélectionné" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #856404;" />
+                        <GridPane hgap="10.0" vgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="NEVER" minWidth="100.0" />
+                              <ColumnConstraints hgrow="ALWAYS" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                              <RowConstraints />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Nom d'utilisateur:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                              <TextField fx:id="editUsernameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                              <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                              <TextField fx:id="editEmailField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label text="Mot de passe:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                              <PasswordField fx:id="editPasswordField" promptText="Laisser vide pour ne pas changer" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label text="Rôle:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                              <ComboBox fx:id="editRoleCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                           </children>
+                        </GridPane>
+                        <HBox spacing="10.0">
+                           <children>
+                              <Button fx:id="updateUserButton" text="Mettre à jour" style="-fx-background-color: #ffc107; -fx-text-fill: black;" />
+                              <Button fx:id="deleteUserButton" text="Supprimer" style="-fx-background-color: #dc3545; -fx-text-fill: white;" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</VBox>
