@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import ArticlesPage from './pages/ArticlesPage';
+
 import ArticleDetailPage from './pages/ArticleDetailPage';
+import ArticleEditPage from './pages/ArticleEditPage';
+import ArticleCreatePage from './pages/ArticleCreatePage';
 import AdminPage from './pages/AdminPage';
 import ManagementPage from './pages/ManagementPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -22,20 +24,16 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/connexion" element={<LoginPage />} />
-              <Route path="/articles" element={
-                <ProtectedRoute requiredRole="EDITOR">
-                  <ArticlesPage />
-                </ProtectedRoute>
-              } />
+
               <Route path="/articles/:id" element={<ArticleDetailPage />} />
               <Route path="/articles/:id/edit" element={
                 <ProtectedRoute requiredRole="EDITOR">
-                  <div>Edit Article Page - À implémenter</div>
+                  <ArticleEditPage />
                 </ProtectedRoute>
               } />
               <Route path="/articles/new" element={
                 <ProtectedRoute requiredRole="EDITOR">
-                  <div>New Article Page - À implémenter</div>
+                  <ArticleCreatePage />
                 </ProtectedRoute>
               } />
               <Route 

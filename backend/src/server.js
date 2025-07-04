@@ -19,19 +19,42 @@ const prisma = new PrismaClient();
 // Security middleware
 app.use(helmet());
 
-// Rate limiting
+// Rate limiting général - exclut les routes d'authentification
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 500, // augmenté à 500 requêtes par fenêtre
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  // Exclure les routes d'auth et health du rate limiting général
+  skip: (req) => {
+    return req.path === '/health' || req.path.startsWith('/api/auth');
+  }
 });
 app.use(limiter);
 
+// Rate limiting désactivé pour l'authentification en développement
+const authLimiter = (req, res, next) => {
+  // En mode développement, on désactive complètement le rate limiting pour l'auth
+  if (process.env.NODE_ENV === 'development') {
+    return next();
+  }
+  
+  // En production, on applique un rate limiting normal
+  const productionAuthLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // 100 tentatives par IP
+    message: 'Too many authentication attempts, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+  
+  return productionAuthLimiter(req, res, next);
+};
+
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -68,7 +91,7 @@ app.get('/health', async (req, res) => {
 });
 
 // API routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/articles', articlesRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/users', usersRoutes);

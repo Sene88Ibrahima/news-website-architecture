@@ -15,15 +15,6 @@ const TokenManagement: React.FC = () => {
     userId: ''
   });
 
-  // Vérifier les permissions
-  if (!hasRole('ADMIN')) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-red-600">Accès non autorisé. Seuls les administrateurs peuvent gérer les tokens API.</p>
-      </div>
-    );
-  }
-
   // Charger les tokens
   const loadTokens = async () => {
     try {
@@ -114,6 +105,15 @@ const TokenManagement: React.FC = () => {
   useEffect(() => {
     loadTokens();
   }, []);
+
+  // Vérifier les permissions
+  if (!hasRole('ADMIN')) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Accès non autorisé. Seuls les administrateurs peuvent gérer les tokens API.</p>
+      </div>
+    );
+  }
 
   return (
     <section className="space-y-6">

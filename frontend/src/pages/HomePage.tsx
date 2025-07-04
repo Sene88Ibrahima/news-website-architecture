@@ -5,14 +5,17 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import { Article, Category } from '../types';
 import { articlesApi, categoriesApi } from '../services/api';
 import { getCategoryColor } from '../utils/categoryColors';
+import { useAuth } from '../contexts/AuthContext';
 
 const HomePage: React.FC = () => {
+  const { user, hasRole } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
@@ -26,6 +29,7 @@ const HomePage: React.FC = () => {
         limit: 10,
         ...(selectedCategory && { category: selectedCategory }),
         ...(searchTerm && { search: searchTerm }),
+        ...(selectedStatus && { published: selectedStatus }),
         sort: sortOrder === 'newest' ? 'desc' : 'asc'
       };
       
@@ -55,7 +59,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     fetchArticles();
-  }, [currentPage, selectedCategory, searchTerm, sortOrder]);
+  }, [currentPage, selectedCategory, selectedStatus, searchTerm, sortOrder]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -68,6 +72,11 @@ const HomePage: React.FC = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
     setCurrentPage(1);
   };
 
@@ -155,6 +164,29 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
             </div>
+            {(hasRole('EDITOR') || hasRole('ADMIN')) && (
+              <div className="lg:w-80">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Filtrer par statut
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white appearance-none"
+                  >
+                    <option value="">Tous les statuts</option>
+                    <option value="true">Publié</option>
+                    <option value="false">Brouillon</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Filtres rapides et navigation par ancienneté */}
@@ -249,11 +281,12 @@ const HomePage: React.FC = () => {
                   ? "Essayez de modifier vos critères de recherche ou de filtrage."
                   : "Il n'y a pas d'articles disponibles pour le moment."}
               </p>
-              {(searchTerm || selectedCategory) && (
+              {(searchTerm || selectedCategory || selectedStatus) && (
                 <button
                   onClick={() => {
                     setSearchTerm('');
                     setSelectedCategory('');
+                    setSelectedStatus('');
                   }}
                   className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors duration-200"
                 >
@@ -270,12 +303,13 @@ const HomePage: React.FC = () => {
             {/* En-tête des résultats */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900">
-                {searchTerm || selectedCategory ? 'Résultats de recherche' : 'Tous les articles'}
+                {searchTerm || selectedCategory || selectedStatus ? 'Résultats de recherche' : 'Tous les articles'}
               </h2>
               <p className="text-gray-600 mt-1">
                 {articles.length} article{articles.length > 1 ? 's' : ''} trouvé{articles.length > 1 ? 's' : ''}
                 {searchTerm && ` pour "${searchTerm}"`}
                 {selectedCategory && ` dans ${categories.find(c => c.id === selectedCategory)?.name}`}
+                {selectedStatus && ` avec le statut ${selectedStatus === 'true' ? 'Publié' : 'Brouillon'}`}
                 {sortOrder === 'newest' ? ' (du plus récent au plus ancien)' : ' (du plus ancien au plus récent)'}
               </p>
             </div>

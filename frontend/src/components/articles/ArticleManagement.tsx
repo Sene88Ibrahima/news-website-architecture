@@ -14,6 +14,7 @@ const ArticleManagement: React.FC = () => {
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [formData, setFormData] = useState<CreateArticleData>({
     title: '',
     content: '',
@@ -25,7 +26,12 @@ const ArticleManagement: React.FC = () => {
   const fetchArticles = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await articlesApi.getAll({ page, limit: 10 });
+      const params = {
+        page,
+        limit: 10,
+        ...(selectedStatus && { published: selectedStatus })
+      };
+      const response = await articlesApi.getAll(params);
       setArticles(response.data.articles);
       setTotalPages(response.data.totalPages);
       setCurrentPage(response.data.currentPage);
@@ -49,6 +55,15 @@ const ArticleManagement: React.FC = () => {
     fetchArticles();
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    fetchArticles(1);
+  }, [selectedStatus]);
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
+    setCurrentPage(1);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,6 +147,34 @@ const ArticleManagement: React.FC = () => {
             Nouvel article
           </button>
         )}
+      </div>
+
+      {/* Filtre de statut */}
+      <div className="mb-6">
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+          <div className="flex items-center space-x-4">
+            <label className="text-sm font-medium text-gray-700">
+              Filtrer par statut :
+            </label>
+            <select
+              value={selectedStatus}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
+            >
+              <option value="">Tous les statuts</option>
+              <option value="true">Publié</option>
+              <option value="false">Brouillon</option>
+            </select>
+            {selectedStatus && (
+              <button
+                onClick={() => handleStatusChange('')}
+                className="text-sm text-blue-600 hover:text-blue-800 underline"
+              >
+                Réinitialiser
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {error && (

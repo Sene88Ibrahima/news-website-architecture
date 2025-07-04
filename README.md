@@ -11,7 +11,7 @@ Cette application suit une architecture microservices distribuée avec séparati
 #### Service SOAP (`soap-service/`)
 - **Port** : 3001
 - **Technologie** : Node.js + Express + node-soap
-- **Base de données** : Postgresql avec Prisma ORM
+- **Base de données** : SQLite avec Prisma ORM
 - **Fonctionnalités** :
   - Authentification sécurisée des utilisateurs
   - Gestion complète des sessions utilisateur
@@ -33,7 +33,7 @@ Cette application suit une architecture microservices distribuée avec séparati
 #### Service REST (`rest-service/`)
 - **Port** : 3002
 - **Technologie** : Node.js + Express
-- **Base de données** : Postgresql avec Prisma ORM
+- **Base de données** : SQLite avec Prisma ORM
 - **Fonctionnalités** :
   - API RESTful complète pour les articles
   - Gestion des catégories d'articles
@@ -280,7 +280,7 @@ Après le lancement, vérifiez que tous les services sont opérationnels :
 - Frontend : `http://localhost:3000`
 
 ### Base de Données
-- **ORM** : Prisma avec Postgresql
+- **ORM** : Prisma avec SQLite
 - **Schémas** :
   - `soap-service/prisma/schema.prisma`
   - `rest-service/prisma/schema.prisma`
@@ -291,7 +291,7 @@ Après le lancement, vérifiez que tous les services sont opérationnels :
 - **Node.js** avec Express.js
 - **Prisma** ORM
 - **SOAP** (node-soap)
-- **Postgresql** (base de données)
+- **SQLite** (base de données)
 
 ### Frontend
 - **React** avec TypeScript

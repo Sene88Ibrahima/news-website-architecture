@@ -13,7 +13,26 @@ module.exports = {
       
       const where = {};
       if (category) where.categoryId = category;
-      if (published !== undefined) where.published = published === 'true';
+      
+      // Filter by published status based on user role
+      const user = req.user; // From auth middleware (can be undefined for non-authenticated users)
+      const isEditorOrAdmin = user && (user.role === 'EDITOR' || user.role === 'ADMIN');
+      
+      if (published !== undefined) {
+        // If published parameter is explicitly provided, use it (only for editors/admins)
+        if (isEditorOrAdmin) {
+          where.published = published === 'true';
+        } else {
+          // For visitors, always show only published articles regardless of the parameter
+          where.published = true;
+        }
+      } else {
+        // If no published parameter, visitors see only published, editors/admins see all
+        if (!isEditorOrAdmin) {
+          where.published = true;
+        }
+      }
+      
       if (search) {
         where.OR = [
           { title: { contains: search, mode: 'insensitive' } },
@@ -68,6 +87,15 @@ module.exports = {
       });
       
       if (!article) {
+        return res.status(404).json({ error: 'Article not found' });
+      }
+      
+      // Check if user can access unpublished articles
+      const user = req.user; // From auth middleware (can be undefined for non-authenticated users)
+      const isEditorOrAdmin = user && (user.role === 'EDITOR' || user.role === 'ADMIN');
+      
+      // If article is not published and user is not editor/admin, deny access
+      if (!article.published && !isEditorOrAdmin) {
         return res.status(404).json({ error: 'Article not found' });
       }
       
