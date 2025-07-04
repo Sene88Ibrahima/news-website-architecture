@@ -157,7 +157,9 @@ module.exports = {
         return res.status(403).json({ error: 'Forbidden' });
       }
       
-      const updateData = {};
+      const updateData = {
+        updatedAt: new Date() // Force update of the updatedAt field
+      };
       if (title !== undefined) updateData.title = title;
       if (content !== undefined) updateData.content = content;
       if (summary !== undefined) updateData.summary = summary;

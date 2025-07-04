@@ -365,6 +365,69 @@ app.post('/api/rest/articles', async (req, res) => {
   }
 });
 
+// PUT /api/rest/articles/:id - Update article (JSON/XML)
+app.put('/api/rest/articles/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    let articleData;
+    
+    // Handle XML input
+    if (req.headers['content-type']?.includes('application/xml')) {
+      const xmlData = req.body;
+      articleData = {
+        title: xmlData.article?.title?.[0] || xmlData.title?.[0],
+        content: xmlData.article?.content?.[0] || xmlData.content?.[0],
+        summary: xmlData.article?.summary?.[0] || xmlData.summary?.[0],
+        categoryId: xmlData.article?.categoryId?.[0] || xmlData.categoryId?.[0],
+        published: (xmlData.article?.published?.[0] || xmlData.published?.[0]) === 'true'
+      };
+    } else {
+      articleData = req.body;
+    }
+    
+    // Check if article exists
+    const existingArticle = await prisma.article.findUnique({
+      where: { id }
+    });
+    
+    if (!existingArticle) {
+      return res.status(404).sendFormatted({ error: 'Article not found' }, 'error');
+    }
+    
+    const updateData = {
+      updatedAt: new Date() // Force update of the updatedAt field
+    };
+    
+    if (articleData.title !== undefined) updateData.title = articleData.title;
+    if (articleData.content !== undefined) updateData.content = articleData.content;
+    if (articleData.summary !== undefined) updateData.summary = articleData.summary;
+    if (articleData.categoryId !== undefined) updateData.categoryId = articleData.categoryId;
+    if (articleData.published !== undefined) updateData.published = articleData.published;
+    
+    const article = await prisma.article.update({
+      where: { id },
+      data: updateData,
+      include: {
+        author: {
+          select: { id: true, username: true, email: true }
+        },
+        category: true
+      }
+    });
+    
+    res.sendFormatted({ article }, 'articleResponse');
+  } catch (error) {
+    console.error('Error updating article:', error);
+    if (error.code === 'P2002') {
+      res.status(400).sendFormatted({ error: 'Article with this title already exists' }, 'error');
+    } else if (error.code === 'P2003') {
+      res.status(400).sendFormatted({ error: 'Invalid category ID' }, 'error');
+    } else {
+      res.status(500).sendFormatted({ error: 'Internal server error' }, 'error');
+    }
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).sendFormatted({ error: 'Endpoint not found' }, 'error');

@@ -71,8 +71,8 @@ const ArticleList: React.FC<ArticleListProps> = ({ articles, onSelect }) => (
               <span className="text-xs font-medium">
                 {(() => {
                   const now = new Date();
-                  const createdAt = new Date(article.createdAt);
-                  const diffInMs = now.getTime() - createdAt.getTime();
+                  const updatedAt = new Date(article.updatedAt);
+                  const diffInMs = now.getTime() - updatedAt.getTime();
                   const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
                   const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
                   const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));

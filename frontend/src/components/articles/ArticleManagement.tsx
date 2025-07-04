@@ -285,7 +285,7 @@ const ArticleManagement: React.FC = () => {
                 Statut
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
+                Dernière modification
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -315,7 +315,7 @@ const ArticleManagement: React.FC = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(article.createdAt).toLocaleDateString('fr-FR')}
+                  {new Date(article.updatedAt).toLocaleDateString('fr-FR')}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   {canEditArticle(article) && (
